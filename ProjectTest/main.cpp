@@ -1042,20 +1042,20 @@ void init() {
 	}
 }
 // 并查集里寻根的过程
-int find(int u) {
-	return u == father[u] ? u : father[u] = find(father[u]);
+int findx(int u) {
+	return u == father[u] ? u : father[u] = findx(father[u]);
 }
 // 将v->u 这条边加入并查集
 void join(int u, int v) {
-	u = find(u);
-	v = find(v);
+	u = findx(u);
+	v = findx(v);
 	if (u == v) return;
 	father[v] = u;
 }
 // 判断 u 和 v是否找到同一个根
 bool same(int u, int v) {
-	u = find(u);
-	v = find(v);
+	u = findx(u);
+	v = findx(v);
 	return u == v;
 }
 // 在有向图里找到删除的那条边，使其变成树
@@ -1111,8 +1111,100 @@ vector<int> findRedundantDirectedConnection(vector<vector<int>>& edges) {
 	return getRemoveEdge(edges);
 
 }
+//超出时间限制
+//void UniqueDfs(vector<vector<int>>& ans,vector<int> nums, vector<int> ret)
+//{
+//	if (nums.empty())
+//	{
+//		vector<vector<int>>::iterator it = find(ans.begin(), ans.end(), ret);
+//		if (it == ans.end())
+//		{
+//			ans.emplace_back(ret);
+//		}
+//		return;
+//	}
+//	vector<int> next;
+//	for (size_t i = 0; i < nums.size(); i++)
+//	{
+//		next = nums;
+//		ret.push_back(nums[i]);
+//		next.erase(next.begin() + i);
+//		UniqueDfs(ans, next, ret);
+//		ret.pop_back();
+//	}
+//}
+//官方题解
+/*class Solution {
+	vector<int> vis;
 
+public:
+	void backtrack(vector<int>& nums, vector<vector<int>>& ans, int idx, vector<int>& perm) {
+		if (idx == nums.size()) {
+			ans.emplace_back(perm);
+			return;
+		}
+		for (int i = 0; i < (int)nums.size(); ++i) {
+			if (vis[i] || (i > 0 && nums[i] == nums[i - 1] && !vis[i - 1])) {
+				continue;
+			}
+			perm.emplace_back(nums[i]);
+			vis[i] = 1;
+			backtrack(nums, ans, idx + 1, perm);
+			vis[i] = 0;
+			perm.pop_back();
+		}
+	}
 
+	vector<vector<int>> permuteUnique(vector<int>& nums) {
+		vector<vector<int>> ans;
+		vector<int> perm;
+		vis.permize(nums.size());
+		sort(nums.begin(), nums.end());
+		backtrack(nums, ans, 0, perm);
+		return ans;
+	}
+};*/
+
+void UniqueDfs(vector<vector<int>>& ans, map<int,int> nums, vector<int> ret,int endSize)
+{
+	if (ret.size() == endSize || nums.empty())
+	{
+		ans.emplace_back(ret);
+		return;
+	}
+	for (map<int, int>::iterator it = nums.begin(); it != nums.end();)
+	{
+		if (it->second == 0)
+		{
+			it = nums.erase(it);
+		}
+		else
+		{
+			ret.emplace_back(it->first);
+			(it->second)--;
+			//if (ret.size() == endSize)
+			//{
+			//	ans.emplace_back(ret);
+			//}
+			UniqueDfs(ans, nums, ret, endSize);
+			(it->second)++;
+			ret.pop_back();
+			it++;
+		}
+	}
+}
+vector<vector<int>> permuteUnique(vector<int>& nums) {
+	vector<vector<int>> ans;
+	vector<int> ret;
+	map<int, int> mpNums;
+	int endSize = nums.size();
+	for (auto i : nums)
+	{
+		mpNums[i]++;
+	}
+	UniqueDfs(ans, mpNums, ret, endSize);
+	return ans;
+}
 
 int main(void)
 {
@@ -1171,10 +1263,12 @@ int main(void)
 		{ '.', '1', '6', '.', '.', '.', '3', '.', '.' }
 	};
 	//solveSudoku(b);
-	vector<vector<int>> a =
+	//vector<vector<int>> a =
 		//{{1, 2}, {2, 3}, {3, 1}, {4, 1}};
-		{{2, 1}, {3, 1}, {4, 2}, {1, 4}};
-	vector<int> c = findRedundantDirectedConnection(a);
+		//{{2, 1}, {3, 1}, {4, 2}, {1, 4}};
+	//vector<int> c = findRedundantDirectedConnection(a);
+	vector<int> a = { 1,1,2 };
+	vector<vector<int>> c = permuteUnique(a);
 	getchar();
 	return 0;
 }
