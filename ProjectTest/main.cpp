@@ -1206,6 +1206,37 @@ vector<vector<int>> permuteUnique(vector<int>& nums) {
 	return ans;
 }
 
+void sumOfLeftLeaves(TreeNode* root, int& ret,int isLeft)
+{
+	if (!root)
+	{
+		return;
+	}
+	if (root->left == NULL && root->right == NULL && isLeft == 1)
+	{
+		ret += root->val;
+	}
+	sumOfLeftLeaves(root->left, ret, 1);
+	sumOfLeftLeaves(root->right, ret, 0);
+}
+int sumOfLeftLeaves(TreeNode* root) {
+	int ret = 0;
+	sumOfLeftLeaves(root, ret,0);
+	return ret;
+}
+
+int sum = 0;
+
+TreeNode* convertBST(TreeNode* root) {
+	if (root != nullptr) {
+		convertBST(root->right);
+		sum += root->val;
+		root->val = sum;
+		convertBST(root->left);
+	}
+	return root;
+}
+
 int main(void)
 {
 	//TreeNode root(3);
