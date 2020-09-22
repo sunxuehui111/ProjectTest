@@ -1237,17 +1237,40 @@ TreeNode* convertBST(TreeNode* root) {
 	return root;
 }
 
+struct Status {
+	int a, b, c;
+};
+
+Status dfs(TreeNode* root) {
+	if (!root) {
+		return{ INT_MAX / 2, 0, 0 };
+	}
+	auto[la, lb, lc] = dfs(root->left);
+	auto[ra, rb, rc] = dfs(root->right);
+	int a = lc + rc + 1;
+	int b = min(a, min(la + rb, ra + lb));
+	int c = min(a, lb + rb);
+	return{ a, b, c };
+}
+
+int minCameraCover(TreeNode* root) {
+	auto[a, b, c] = dfs(root);
+	return b;
+}
+
+
 int main(void)
 {
-	//TreeNode root(3);
-	//TreeNode l1(9);
-	//TreeNode r1(20);
-	//TreeNode l2(15);
-	//TreeNode r2(7);
-	//root.left = &l1;
+	TreeNode root(0);
+	TreeNode l1(0);
+	TreeNode r3(20);
+	TreeNode l2(0);
+	TreeNode r2(0);
+	root.left = &r3;
+	r3.right = &l1;
 	//root.right = &r1;
-	//r1.left = &l2;
-	//r1.right = &r2;
+	l1.left = &l2;
+	l1.right = &r2;
 	//printf("%d", minDepth(&root));
 	//unsigned a = -1;
 	//if (a == 0xffffffff)
@@ -1298,8 +1321,9 @@ int main(void)
 		//{{1, 2}, {2, 3}, {3, 1}, {4, 1}};
 		//{{2, 1}, {3, 1}, {4, 2}, {1, 4}};
 	//vector<int> c = findRedundantDirectedConnection(a);
-	vector<int> a = { 1,1,2 };
-	vector<vector<int>> c = permuteUnique(a);
+	//vector<int> a = { 1,1,2 };
+	//vector<vector<int>> c = permuteUnique(a);
+	int ret = minCameraCover(&root);
 	getchar();
 	return 0;
 }
