@@ -1241,36 +1241,68 @@ struct Status {
 	int a, b, c;
 };
 
-Status dfs(TreeNode* root) {
-	if (!root) {
-		return{ INT_MAX / 2, 0, 0 };
+//Status dfs(TreeNode* root) {
+//	if (!root) {
+//		return{ INT_MAX / 2, 0, 0 };
+//	}
+//	auto[la, lb, lc] = dfs(root->left);
+//	auto[ra, rb, rc] = dfs(root->right);
+//	int a = lc + rc + 1;
+//	int b = min(a, min(la + rb, ra + lb));
+//	int c = min(a, lb + rb);
+//	return{ a, b, c };
+//}
+//
+//int minCameraCover(TreeNode* root) {
+//	auto[a, b, c] = dfs(root);
+//	return b;
+//}
+
+
+void mergeTreesFun(TreeNode** t1, TreeNode** t2)
+{
+	if (*t2 == nullptr)
+	{
+		return;
 	}
-	auto[la, lb, lc] = dfs(root->left);
-	auto[ra, rb, rc] = dfs(root->right);
-	int a = lc + rc + 1;
-	int b = min(a, min(la + rb, ra + lb));
-	int c = min(a, lb + rb);
-	return{ a, b, c };
+	if (*t1 == nullptr && *t2)
+	{
+		*t1 = *t2;
+	}
+	else
+	{
+		(*t1)->val += (*t2)->val;
+	}
+	mergeTreesFun(&((*t1)->left), &((*t2)->left));
+	mergeTreesFun(&((*t1)->right), &((*t2)->right));
 }
 
-int minCameraCover(TreeNode* root) {
-	auto[a, b, c] = dfs(root);
-	return b;
+TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {
+	mergeTreesFun(&t1, &t2);
+	return t1;
 }
 
 
 int main(void)
 {
-	TreeNode root(0);
-	TreeNode l1(0);
-	TreeNode r3(20);
-	TreeNode l2(0);
-	TreeNode r2(0);
-	root.left = &r3;
-	r3.right = &l1;
-	//root.right = &r1;
+	TreeNode root(1);
+	TreeNode l1(3);
+	TreeNode r1(2);
+	TreeNode l2(5);
+	root.left = &l1;
+	root.right = &r1;
 	l1.left = &l2;
-	l1.right = &r2;
+
+	TreeNode root2(2);
+	TreeNode l11(1);
+	TreeNode r11(3);
+	TreeNode l22(4);
+	TreeNode r22(7);
+
+	root2.left = &l11;
+	root2.right = &r11;
+	l11.right = &l22;
+	r11.right = &r22;
 	//printf("%d", minDepth(&root));
 	//unsigned a = -1;
 	//if (a == 0xffffffff)
@@ -1323,7 +1355,8 @@ int main(void)
 	//vector<int> c = findRedundantDirectedConnection(a);
 	//vector<int> a = { 1,1,2 };
 	//vector<vector<int>> c = permuteUnique(a);
-	int ret = minCameraCover(&root);
+	//int ret = minCameraCover(&root);
+	TreeNode* ret = mergeTrees(&root, &root2);
 	getchar();
 	return 0;
 }
